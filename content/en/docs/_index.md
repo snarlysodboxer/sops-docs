@@ -1508,6 +1508,40 @@ stores:
 > The YAML emitter used by sops only supports values between 2 and 9. If
 > you specify 1, or 10 and larger, the indent will be 2.
 
+#### Array indentation
+
+When `compact_array_indent` is enabled, the array indicator (`- `) is
+considered part of the indentation. Combined with `indent: 2`, this produces
+output where arrays are flush with their parent key, matching the style used in
+Kubernetes manifests and many YAML linters. For example:
+
+``` yaml
+spec:
+  rules:
+  - host: example.com
+```
+
+You can enable this with the `--compact-array-indent` CLI option or by
+configuring `.sops.yaml` with:
+
+``` yaml
+stores:
+    yaml:
+        compact_array_indent: true
+```
+
+### YAML document start marker
+
+By default, SOPS strips the `---` document start marker during encryption. This
+might violate linting rules. You can preserve the marker with the
+`--document-start-marker` CLI option or by configuring `.sops.yaml` with:
+
+``` yaml
+stores:
+    yaml:
+        document_start_marker: true
+```
+
 ### YAML anchors
 
 SOPS only supports a subset of `YAML`\'s many types. Encrypting YAML
@@ -2179,6 +2213,13 @@ The store configuration object can have the following keys:
   * `indent` (integer; default `4`): the indentation to use in number of spaces.
     The YAML emitter used by sops only supports values between `2` and `9`.
     If you specify `1`, or `10` and larger, the indent will be `2`.
+
+  * `compact_array_indent` (boolean; default `false`): when enabled, the array
+    indicator (`- `) is considered part of the indentation. With `indent: 2`, this
+    produces output where arrays are flush with their parent key.
+
+  * `document_start_marker` (boolean; default `false`): when enabled, prepends the
+    `---` document start marker to the YAML output.
 
 ## Encryption Protocol
 
